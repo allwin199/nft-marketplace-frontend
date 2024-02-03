@@ -1,7 +1,11 @@
-import React from "react";
+import FetchMyNfts from "@/components/Marketplace/FetchMyNfts";
 
 const page = () => {
-    return <div>Profile</div>;
+    return (
+        <div className="container mx-auto pt-20">
+            <FetchMyNfts />
+        </div>
+    );
 };
 
 export default page;
