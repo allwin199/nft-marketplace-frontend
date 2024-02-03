@@ -6,7 +6,6 @@ import { ethers } from "ethers";
 import { deployedContract } from "@/constants/index";
 import { getPinataUrl, getImageFromPinata } from "@/utils/Pinata";
 import DisplayNfts from "../DisplayNfts/DisplayNfts";
-import { Allerta_Stencil } from "next/font/google";
 
 type NftTypes = {
     tokenId: number;
