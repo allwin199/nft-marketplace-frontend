@@ -60,6 +60,7 @@ const SellNft = () => {
             );
             console.info("contract call successs", data);
             setForm({ ...initialFormState });
+            router.push("/");
         } catch (error) {
             console.log("Listing Nft to Marketplace Error");
         } finally {

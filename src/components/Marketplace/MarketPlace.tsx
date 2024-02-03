@@ -1,67 +1,73 @@
-import React from "react";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useContract, useContractRead } from "@thirdweb-dev/react";
+import { ethers } from "ethers";
+import { deployedContract } from "@/constants/index";
+import { getPinataUrl, getImageFromPinata } from "@/utils/Pinata";
+import DisplayNfts from "../DisplayNfts/DisplayNfts";
+
+type NftTypes = {
+    tokenId: number;
+    price: string;
+    owner: string;
+    seller: string;
+    currentlyListed: boolean;
+    name: string;
+    description: string;
+    image: string;
+};
 
 const Marketplace = () => {
-    const sampleData = [
-        {
-            name: "NFT#1",
-            description: "Alchemy's First NFT",
-            website: "http://axieinfinity.io",
-            image: "https://gateway.pinata.cloud/ipfs/QmTsRJX7r5gyubjkdmzFrKQhHv74p5wT9LdeF1m3RTqrE5",
-            price: "0.03ETH",
-            currentlySelling: "True",
-            address: "0xe81Bf5A757CB4f7F82a2F23b1e59bE45c33c5b13",
-        },
-        {
-            name: "NFT#2",
-            description: "Alchemy's Second NFT",
-            website: "http://axieinfinity.io",
-            image: "https://gateway.pinata.cloud/ipfs/QmdhoL9K8my2vi3fej97foiqGmJ389SMs55oC5EdkrxF2M",
-            price: "0.03ETH",
-            currentlySelling: "True",
-            address: "0xe81Bf5A757C4f7F82a2F23b1e59bE45c33c5b13",
-        },
-        {
-            name: "NFT#3",
-            description: "Alchemy's Third NFT",
-            website: "http://axieinfinity.io",
-            image: "https://gateway.pinata.cloud/ipfs/QmTsRJX7r5gyubjkdmzFrKQhHv74p5wT9LdeF1m3RTqrE5",
-            price: "0.03ETH",
-            currentlySelling: "True",
-            address: "0xe81Bf5A757C4f7F82a2F23b1e59bE45c33c5b13",
-        },
-    ];
+    const { contract } = useContract(deployedContract);
+
+    const [allTheNfs, setAllTheNfts] = useState<NftTypes[]>([]);
+
+    const {
+        data: allNfts,
+        isLoading,
+        isSuccess,
+    } = useContractRead(contract, "getAllNFTs");
+
+    useEffect(() => {
+        const fetchAllNfts = async () => {
+            const nfts = await Promise.all(
+                allNfts.map(async (nft: NftTypes) => {
+                    const tokenUri = await contract?.call("tokenURI", [
+                        nft.tokenId,
+                    ]);
+
+                    const metadata = await getPinataUrl(tokenUri);
+                    const { name, description, image } = metadata.data;
+                    const imageData = await getImageFromPinata(image);
+
+                    const item = {
+                        tokenId: nft.tokenId,
+                        price: ethers.utils.formatEther(nft.price.toString()),
+                        owner: nft.owner,
+                        seller: nft.seller,
+                        currentlyListed: nft.currentlyListed,
+                        name: name,
+                        description: description,
+                        image: imageData,
+                    };
+
+                    return item;
+                })
+            );
+            setAllTheNfts(nfts.reverse());
+        };
+
+        if (isSuccess) {
+            fetchAllNfts();
+        }
+    }, [isSuccess, allNfts, contract]);
+
     return (
         <div className="mt-10">
-            <div className="flex flex-col place-items-center mt-20">
-                <div className="md:text-xl font-bold text-white mb-10">
-                    Top NFTs
-                </div>
-                <div className="flex mt-10 justify-between flex-wrap max-w-screen-xl text-center">
-                    {sampleData.map((value, index) => {
-                        return (
-                            <div
-                                className="border-2 ml-12 mt-5 mb-12 flex flex-col items-center rounded-lg w-48 md:w-72 shadow-2xl"
-                                key={value.name}
-                            >
-                                {/* <img
-                                    src={IPFSUrl}
-                                    alt=""
-                                    className="w-72 h-80 rounded-lg object-cover"
-                                    crossOrigin="anonymous"
-                                /> */}
-                                <div className="text-white w-full p-2 bg-gradient-to-t from-[#454545] to-transparent rounded-lg pt-5 -mt-20">
-                                    <strong className="text-xl">
-                                        {value.name}
-                                    </strong>
-                                    <p className="display-inline">
-                                        {value.description}
-                                    </p>
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            </div>
+            <h1 className="text-[18px]">Top NFTs</h1>
+
+            <DisplayNfts nfts={allTheNfs} />
         </div>
     );
 };

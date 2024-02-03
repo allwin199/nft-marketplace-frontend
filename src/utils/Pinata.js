@@ -59,3 +59,24 @@ export const pinJSONToIPFS = async (metadata) => {
         return error;
     }
 };
+
+export const getPinataUrl = async (tokenUri) => {
+    const pinataToken = process.env.NEXT_PUBLIC_PINATA_GATEWAY_KEY;
+
+    try {
+        const response = await axios.get(
+            `https://green-rapid-felidae-648.mypinata.cloud/ipfs/${tokenUri}?pinataGatewayToken=${pinataToken}`
+        );
+
+        return response;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getImageFromPinata = async (imageUrl) => {
+    let IPFSUrl = imageUrl.split("/");
+    const lastIndex = IPFSUrl.length;
+    IPFSUrl = "https://ipfs.io/ipfs/" + IPFSUrl[lastIndex - 1];
+    return IPFSUrl;
+};
