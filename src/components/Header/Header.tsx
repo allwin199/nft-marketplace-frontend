@@ -11,11 +11,9 @@ export default function Header() {
             <nav className="fixed w-full z-50 bg-[#13131a] border-b border-[#3b3b3b]">
                 <div className="flex justify-end items-center p-4 px-10 text-sm">
                     <Link
-                        href="/marketplace"
+                        href="/"
                         className={`px-4 py-2 transition hover:text-primary ${
-                            pathname === "/marketplace"
-                                ? "text-white"
-                                : "text-zinc-400"
+                            pathname === "/" ? "text-white" : "text-zinc-400"
                         }`}
                     >
                         Marketplace
