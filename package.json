@@ -9,9 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@thirdweb-dev/react": "^4.4.5",
     "@thirdweb-dev/sdk": "^4.0.33",
     "axios": "^1.6.7",
-    "ethers": "5",
+    "ethers": "^5.7.2",
     "form-data": "^4.0.0",
     "next": "14.1.0",
     "react": "^18",
