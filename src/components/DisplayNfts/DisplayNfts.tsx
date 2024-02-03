@@ -26,7 +26,7 @@ const DisplayCampaigns = ({ nfts }: NftProps) => {
     return (
         <div className="grid grid-cols-4 gap-10 my-6">
             {nfts.map((nft) => (
-                <Link href={`/campaigns/${nft.tokenId}`} key={nft.tokenId}>
+                <Link href={`/nfts/${nft.tokenId}`} key={nft.tokenId}>
                     <div className="rounded-[15px] bg-[#3a3a43] cursor-pointer text-sm">
                         {/* eslint-disable @next/next/no-img-element */}
                         <img
