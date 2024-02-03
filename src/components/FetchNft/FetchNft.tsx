@@ -18,11 +18,13 @@ const FetchNft = ({ id }: FetchNftPropTypes) => {
     const [nftDesc, setNftDesc] = useState("");
     const [nftImage, setNftImage] = useState("");
     const [fetchingData, setFetchingData] = useState(false);
+    const [isBuying, setIsBuying] = useState(false);
 
     const {
         data: nft,
         isLoading,
         isSuccess,
+        refetch,
     } = useContractRead(contract, "getListedForTokenId", [id]);
 
     useEffect(() => {
@@ -54,7 +56,21 @@ const FetchNft = ({ id }: FetchNftPropTypes) => {
         }
     }, [isSuccess, contract, nft]);
 
-    if (isLoading || fetchingData) {
+    const buyNft = async () => {
+        setIsBuying(true);
+        try {
+            await contract?.call("executeSale", [id], {
+                value: nft.price,
+            });
+            refetch();
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsBuying(false);
+        }
+    };
+
+    if (isLoading || (fetchingData && !isBuying)) {
         return (
             <div className="bg-[#1c1c24] flex justify-center items-center flex-col rounded-[10px] sm:p-10 p-4 my-10">
                 <div className="flex justify-center items-center p-[16px] sm:min-w-[380px] bg-[#3a3a43] rounded-[10px]">
@@ -98,13 +114,22 @@ const FetchNft = ({ id }: FetchNftPropTypes) => {
                             {address == nft.seller ? (
                                 "You own this NFT"
                             ) : (
-                                <button
-                                    type="submit"
-                                    className="bg-[#0041c2] px-16 rounded py-3"
-                                >
-                                    {/* {isListing ? "Listing..." : "Buy"} */}
-                                    Buy
-                                </button>
+                                <>
+                                    {address ? (
+                                        <button
+                                            onClick={buyNft}
+                                            disabled={isBuying}
+                                            className="bg-[#0041c2] px-16 rounded py-3"
+                                        >
+                                            {/* {isListing ? "Listing..." : "Buy"} */}
+                                            {isBuying ? "Buying..." : "Buy"}
+                                        </button>
+                                    ) : (
+                                        <div className="bg-gray-500 rounded py-3 w-[300px] text-center">
+                                            Connect your wallet to Buy
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>

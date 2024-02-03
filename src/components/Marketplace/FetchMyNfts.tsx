@@ -37,7 +37,7 @@ const Marketplace = () => {
             );
 
             const nfts = await Promise.all(
-                allNfts.map(async (nft: NftTypes) => {
+                myNfts.map(async (nft: NftTypes) => {
                     const tokenUri = await contract?.call("tokenURI", [
                         nft.tokenId,
                     ]);
