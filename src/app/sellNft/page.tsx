@@ -1,7 +1,11 @@
-import React from "react";
+import SellNft from "@/components/SellNft/SellNft";
 
 const page = () => {
-    return <div>List My Nft</div>;
+    return (
+        <div className="pt-10">
+            <SellNft />
+        </div>
+    );
 };
 
 export default page;
