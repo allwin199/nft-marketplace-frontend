@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useContract, useContractRead, useAddress } from "@thirdweb-dev/react";
+import FormField from "../SellNft/FormField";
 import { ethers } from "ethers";
 import { deployedContract } from "@/constants/index";
 import { getPinataUrl, getImageFromPinata } from "@/utils/Pinata";
@@ -19,13 +20,17 @@ const FetchNft = ({ id }: FetchNftPropTypes) => {
     const [nftImage, setNftImage] = useState("");
     const [fetchingData, setFetchingData] = useState(false);
     const [isBuying, setIsBuying] = useState(false);
+    const [sellingPrice, setSellingPrice] = useState("0");
+    const [isReselling, setIsReselling] = useState(false);
 
     const {
         data: nft,
         isLoading,
         isSuccess,
         refetch,
-    } = useContractRead(contract, "getListedForTokenId", [id]);
+    } = useContractRead(contract, "getItemForTokenId", [id]);
+
+    const { data: listingPrice } = useContractRead(contract, "getListingPrice");
 
     useEffect(() => {
         setFetchingData(true);
@@ -38,8 +43,6 @@ const FetchNft = ({ id }: FetchNftPropTypes) => {
                 const metadata = await getPinataUrl(tokenUri);
                 const { name, description, image } = metadata.data;
                 const imageData = await getImageFromPinata(image);
-
-                console.log("imageData", imageData);
 
                 setNftName(name);
                 setNftDesc(description);
@@ -70,6 +73,22 @@ const FetchNft = ({ id }: FetchNftPropTypes) => {
         }
     };
 
+    const reSellNft = async () => {
+        setIsReselling(true);
+        const priceInWei = ethers.utils.parseEther(sellingPrice.toString());
+        try {
+            await contract?.call("reSellNft", [id, priceInWei], {
+                value: listingPrice,
+            });
+            refetch();
+            setSellingPrice("0");
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsReselling(false);
+        }
+    };
+
     if (isLoading || (fetchingData && !isBuying)) {
         return (
             <div className="bg-[#1c1c24] flex justify-center items-center flex-col rounded-[10px] sm:p-10 p-4 my-10">
@@ -85,13 +104,13 @@ const FetchNft = ({ id }: FetchNftPropTypes) => {
     if (isSuccess) {
         return (
             <div>
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-[#222222]">
+                <div className="flex gap-10">
+                    <div className="">
                         {/* eslint-disable @next/next/no-img-element */}
                         <img
                             src={nftImage}
                             alt="campaign"
-                            className="w-[300px] h-[330px] object-fit rounded-xl"
+                            className="w-[450px] h-[300px] object-cover rounded-xl"
                         />
                     </div>
                     <div>
@@ -112,18 +131,50 @@ const FetchNft = ({ id }: FetchNftPropTypes) => {
                         </div>
                         <div className="mt-10">
                             {address == nft.seller ? (
-                                "You own this NFT"
+                                <div>
+                                    <p>You own this NFT</p>
+
+                                    <form>
+                                        <div className="flex flex-wrap gap-[40px] mt-8">
+                                            <FormField
+                                                labelName="Re-Sell Price *"
+                                                placeholder="Price in ETH"
+                                                inputType="number"
+                                                value={sellingPrice}
+                                                handleChange={(e) =>
+                                                    setSellingPrice(
+                                                        e.target.value
+                                                    )
+                                                }
+                                            />
+                                        </div>
+                                        <button
+                                            onClick={reSellNft}
+                                            disabled={isReselling}
+                                            className="bg-[#0041c2] px-16 rounded py-3 mt-4"
+                                        >
+                                            {isReselling
+                                                ? "Selling..."
+                                                : "Sell"}
+                                        </button>
+                                    </form>
+                                </div>
                             ) : (
                                 <>
                                     {address ? (
-                                        <button
-                                            onClick={buyNft}
-                                            disabled={isBuying}
-                                            className="bg-[#0041c2] px-16 rounded py-3"
-                                        >
-                                            {/* {isListing ? "Listing..." : "Buy"} */}
-                                            {isBuying ? "Buying..." : "Buy"}
-                                        </button>
+                                        <div>
+                                            {!nft.sold ? (
+                                                <button
+                                                    onClick={buyNft}
+                                                    disabled={isBuying}
+                                                    className="bg-[#0041c2] px-16 rounded py-3"
+                                                >
+                                                    {isBuying
+                                                        ? "Buying..."
+                                                        : "Buy"}
+                                                </button>
+                                            ) : null}
+                                        </div>
                                     ) : (
                                         <div className="bg-gray-500 rounded py-3 w-[300px] text-center">
                                             Connect your wallet to Buy

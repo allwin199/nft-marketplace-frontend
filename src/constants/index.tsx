@@ -1,1 +1,1 @@
-export const deployedContract = "0xEB5fC7Fb99388c0ed849f08E17FA7F882385E329";
+export const deployedContract = "0xCD86683e89C6975A5b40c9aa8644001E3b2CD369";

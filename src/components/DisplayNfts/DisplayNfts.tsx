@@ -5,7 +5,7 @@ type NftTypes = {
     price: string;
     owner: string;
     seller: string;
-    currentlyListed: boolean;
+    sold: boolean;
     name: string;
     description: string;
     image: string;
@@ -15,8 +15,8 @@ type NftProps = {
     nfts: NftTypes[];
 };
 
-const DisplayCampaigns = ({ nfts }: NftProps) => {
-    const campaignCreator = (address: string) => {
+const DisplayNfts = ({ nfts }: NftProps) => {
+    const nftOwner = (address: string) => {
         const slice1 = address.slice(0, 6);
         const slice2 = address.slice(-4);
 
@@ -32,7 +32,7 @@ const DisplayCampaigns = ({ nfts }: NftProps) => {
                         <img
                             src={nft.image}
                             alt="fund"
-                            className="w-full h-[180px] object-contain rounded-[15px]"
+                            className="w-full h-[180px] object-cover rounded-[15px]"
                         />
                         <div className="p-4">
                             <div className="block">
@@ -50,9 +50,9 @@ const DisplayCampaigns = ({ nfts }: NftProps) => {
 
                             <div className="flex items-center mt-[16px] gap-[12px]">
                                 <p className="flex-1 font-epilogue font-normal text-[12px] text-[#808191] truncate">
-                                    Create by{" "}
+                                    Created by{" "}
                                     <span className="text-[#b2b3bd]">
-                                        {campaignCreator(nft.seller)}
+                                        {nftOwner(nft.seller)}
                                     </span>
                                 </p>
                             </div>
@@ -64,4 +64,4 @@ const DisplayCampaigns = ({ nfts }: NftProps) => {
     );
 };
 
-export default DisplayCampaigns;
+export default DisplayNfts;

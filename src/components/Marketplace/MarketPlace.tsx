@@ -12,7 +12,7 @@ type NftTypes = {
     price: string;
     owner: string;
     seller: string;
-    currentlyListed: boolean;
+    sold: boolean;
     name: string;
     description: string;
     image: string;
@@ -31,8 +31,12 @@ const Marketplace = () => {
 
     useEffect(() => {
         const organizeAllNfts = async () => {
+            const unsoldNfts = allNfts.filter(
+                (nft: NftTypes) => nft.sold === false
+            );
+
             const nfts = await Promise.all(
-                allNfts.map(async (nft: NftTypes) => {
+                unsoldNfts.map(async (nft: NftTypes) => {
                     const tokenUri = await contract?.call("tokenURI", [
                         nft.tokenId,
                     ]);
@@ -46,7 +50,7 @@ const Marketplace = () => {
                         price: ethers.utils.formatEther(nft.price.toString()),
                         owner: nft.owner,
                         seller: nft.seller,
-                        currentlyListed: nft.currentlyListed,
+                        sold: nft.sold,
                         name: name,
                         description: description,
                         image: imageData,

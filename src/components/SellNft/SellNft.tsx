@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import FormField from "../FormField";
-import FormTextArea from "../FormTextArea";
+import FormField from "./FormField";
+import FormTextArea from "./FormTextArea";
 import { useContract, useContractRead, useAddress } from "@thirdweb-dev/react";
 import { ethers } from "ethers";
 import { deployedContract } from "@/constants/index";
@@ -31,7 +31,7 @@ const SellNft = () => {
 
     const { data: listingPrice, isLoading } = useContractRead(
         contract,
-        "getListPrice"
+        "getListingPrice"
     );
 
     const [form, setForm] = useState<formFields>(initialFormState);
@@ -88,7 +88,6 @@ const SellNft = () => {
         try {
             if (e.target.files) {
                 setIsImageUploading(true);
-                console.log(e.target.files[0]);
                 const pinataResult = await pinFileToIPFS(e.target.files[0]);
                 setForm({ ...form, imageUrl: pinataResult.data.IpfsHash });
             }
