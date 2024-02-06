@@ -113,7 +113,7 @@ const SellNft = () => {
                         <div className="flex flex-wrap gap-[40px]">
                             <FormField
                                 labelName="Nft Name *"
-                                placeholder="Nft name 1"
+                                placeholder="Nft name"
                                 inputType="text"
                                 value={form.name}
                                 handleChange={(e) =>
