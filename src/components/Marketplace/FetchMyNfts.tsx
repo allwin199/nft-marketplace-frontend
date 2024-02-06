@@ -12,7 +12,7 @@ type NftTypes = {
     price: string;
     owner: string;
     seller: string;
-    currentlyListed: boolean;
+    sold: boolean;
     name: string;
     description: string;
     image: string;
@@ -51,7 +51,7 @@ const Marketplace = () => {
                         price: ethers.utils.formatEther(nft.price.toString()),
                         owner: nft.owner,
                         seller: nft.seller,
-                        currentlyListed: nft.currentlyListed,
+                        sold: nft.sold,
                         name: name,
                         description: description,
                         image: imageData,

@@ -73,7 +73,8 @@ const FetchNft = ({ id }: FetchNftPropTypes) => {
         }
     };
 
-    const reSellNft = async () => {
+    const reSellNft = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         setIsReselling(true);
         const priceInWei = ethers.utils.parseEther(sellingPrice.toString());
         try {
@@ -134,7 +135,7 @@ const FetchNft = ({ id }: FetchNftPropTypes) => {
                                 <div>
                                     <p>You own this NFT</p>
 
-                                    <form>
+                                    <form onSubmit={(e) => reSellNft(e)}>
                                         <div className="flex flex-wrap gap-[40px] mt-8">
                                             <FormField
                                                 labelName="Re-Sell Price *"
@@ -149,7 +150,7 @@ const FetchNft = ({ id }: FetchNftPropTypes) => {
                                             />
                                         </div>
                                         <button
-                                            onClick={reSellNft}
+                                            type="submit"
                                             disabled={isReselling}
                                             className="bg-[#0041c2] px-16 rounded py-3 mt-4"
                                         >
