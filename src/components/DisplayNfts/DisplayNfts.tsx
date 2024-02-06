@@ -16,12 +16,12 @@ type NftProps = {
 };
 
 const DisplayNfts = ({ nfts }: NftProps) => {
-    const nftOwner = (address: string) => {
-        const slice1 = address.slice(0, 6);
-        const slice2 = address.slice(-4);
+    // const nftOwner = (address: string) => {
+    //     const slice1 = address.slice(0, 6);
+    //     const slice2 = address.slice(-4);
 
-        return slice1 + "..." + slice2;
-    };
+    //     return slice1 + "..." + slice2;
+    // };
 
     return (
         <div className="grid grid-cols-4 gap-10 my-6">
@@ -48,14 +48,14 @@ const DisplayNfts = ({ nfts }: NftProps) => {
                                 {nft.price} ETH
                             </h4>
 
-                            <div className="flex items-center mt-[16px] gap-[12px]">
+                            {/* <div className="flex items-center mt-[16px] gap-[12px]">
                                 <p className="flex-1 font-epilogue font-normal text-[12px] text-[#808191] truncate">
                                     Created by{" "}
                                     <span className="text-[#b2b3bd]">
                                         {nftOwner(nft.seller)}
                                     </span>
                                 </p>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </Link>

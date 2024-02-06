@@ -6,12 +6,14 @@ import FormField from "../SellNft/FormField";
 import { ethers } from "ethers";
 import { deployedContract } from "@/constants/index";
 import { getPinataUrl, getImageFromPinata } from "@/utils/Pinata";
+import { useRouter } from "next/navigation";
 
 type FetchNftPropTypes = {
     id: string;
 };
 
 const FetchNft = ({ id }: FetchNftPropTypes) => {
+    const router = useRouter();
     const { contract } = useContract(deployedContract);
     const address = useAddress();
 
@@ -81,7 +83,7 @@ const FetchNft = ({ id }: FetchNftPropTypes) => {
             await contract?.call("reSellNft", [id, priceInWei], {
                 value: listingPrice,
             });
-            refetch();
+            router.push("/");
             setSellingPrice("0");
         } catch (error) {
             console.log(error);
@@ -131,14 +133,14 @@ const FetchNft = ({ id }: FetchNftPropTypes) => {
                             </div>
                         </div>
                         <div className="mt-10">
-                            {address == nft.seller ? (
+                            {address == nft.owner ? (
                                 <div>
                                     <p>You own this NFT</p>
 
                                     <form onSubmit={(e) => reSellNft(e)}>
                                         <div className="flex flex-wrap gap-[40px] mt-8">
                                             <FormField
-                                                labelName="Re-Sell Price *"
+                                                labelName="Sell Price *"
                                                 placeholder="Price in ETH"
                                                 inputType="number"
                                                 value={sellingPrice}
@@ -174,7 +176,9 @@ const FetchNft = ({ id }: FetchNftPropTypes) => {
                                                         ? "Buying..."
                                                         : "Buy"}
                                                 </button>
-                                            ) : null}
+                                            ) : (
+                                                <p>Sold!</p>
+                                            )}
                                         </div>
                                     ) : (
                                         <div className="bg-gray-500 rounded py-3 w-[300px] text-center">
@@ -188,9 +192,9 @@ const FetchNft = ({ id }: FetchNftPropTypes) => {
                 </div>
                 <div className="mt-6">
                     <div>
-                        <h4 className="text-xl text-gray-300">Creator</h4>
+                        <h4 className="text-xl text-gray-300">Owner</h4>
                         <span className="text-sm text-gray-400">
-                            {nft.seller}
+                            {nft.owner}
                         </span>
                     </div>
                     <div className="mt-6">

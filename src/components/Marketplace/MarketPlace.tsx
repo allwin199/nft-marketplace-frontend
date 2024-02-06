@@ -21,7 +21,7 @@ type NftTypes = {
 const Marketplace = () => {
     const { contract } = useContract(deployedContract);
 
-    const [allTheNfts, setAllTheNfts] = useState<NftTypes[]>();
+    const [allTheNfts, setAllTheNfts] = useState<NftTypes[]>([]);
 
     const {
         data: allNfts,
@@ -31,6 +31,8 @@ const Marketplace = () => {
 
     useEffect(() => {
         const organizeAllNfts = async () => {
+            setAllTheNfts([]);
+
             const unsoldNfts = allNfts.filter(
                 (nft: NftTypes) => nft.sold === false
             );
@@ -59,7 +61,7 @@ const Marketplace = () => {
                     return item;
                 })
             );
-            setAllTheNfts(nfts.reverse());
+            setAllTheNfts(nfts);
         };
 
         if (isSuccess) {
@@ -67,7 +69,7 @@ const Marketplace = () => {
         }
     }, [isSuccess, allNfts, contract]);
 
-    if (isLoading || !allTheNfts) {
+    if (isLoading || allTheNfts.length == 0) {
         return (
             <div className="bg-[#1c1c24] flex justify-center items-center flex-col rounded-[10px] sm:p-10 p-4 my-10">
                 <div className="flex justify-center items-center p-[16px] sm:min-w-[380px] bg-[#3a3a43] rounded-[10px]">

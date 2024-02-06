@@ -58,9 +58,8 @@ const SellNft = () => {
                     value: listingPrice,
                 }
             );
-            console.info("contract call successs", data);
-            setForm({ ...initialFormState });
             router.push("/");
+            setForm({ ...initialFormState });
         } catch (error) {
             console.log("Listing Nft to Marketplace Error");
         } finally {
